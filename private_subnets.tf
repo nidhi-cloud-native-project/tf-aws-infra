@@ -5,6 +5,6 @@ resource "aws_subnet" "private_subnets" {
   availability_zone = element(var.availability_zones, count.index)
 
   tags = {
-    Name = "${var.profile}-PrivateSubnet-${count.index}"
+    Name = "${var.vpc_name}-PrivateSubnet-${count.index}"
   }
 }
