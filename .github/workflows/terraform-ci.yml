@@ -27,6 +27,3 @@ jobs:
 
       - name: Run Terraform Validate
         run: terraform validate
-
-      - name: Show Terraform Plan (Dry Run)
-        run: terraform plan -input=false -no-color
