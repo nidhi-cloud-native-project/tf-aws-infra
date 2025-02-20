@@ -5,5 +5,4 @@ resource "aws_vpc" "main_vpc" {
   tags = {
     Name = "${var.vpc_name}"
   }
-            invalid_syntax_here  # Terraform validate will fail
 }
