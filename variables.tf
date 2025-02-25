@@ -32,3 +32,24 @@ variable "availability_zones" {
   description = "List of Availability Zones"
   type        = list(string)
 }
+
+variable "custom_ami_id" {
+  description = "Custom AMI ID built with Packer"
+  type        = string
+}
+
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t2.micro"
+}
+
+variable "app_port" {
+  description = "Port on which the application runs"
+  type        = number
+}
+
+variable "ssh_key_name" {
+  description = "SSH key name for accessing EC2"
+  type        = string
+}
