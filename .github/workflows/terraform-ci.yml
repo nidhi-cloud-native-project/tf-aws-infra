@@ -9,21 +9,23 @@ jobs:
   terraform:
     name: Terraform Checks
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.10.5  # Ensure correct Terraform version
+          terraform_version: 1.10.5
 
       - name: Initialize Terraform
         run: terraform init
 
       - name: Run Terraform Format Check
         run: terraform fmt -check
+        continue-on-error: false  # Fail if formatting is incorrect
 
       - name: Run Terraform Validate
         run: terraform validate
+        continue-on-error: false  # Fail if validation fails
