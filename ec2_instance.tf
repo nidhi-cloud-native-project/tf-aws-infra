@@ -13,6 +13,15 @@ resource "aws_instance" "app_instance" {
     delete_on_termination = true
   }
 
+  # User data to pass DB connection details at instance boot
+  user_data = <<-EOF
+              #!/bin/bash
+              echo "DB_HOST=${aws_db_instance.rds_instance.address}" >> /etc/environment
+              echo "DB_NAME=csye6225" >> /etc/environment
+              echo "DB_USER=csye6225" >> /etc/environment
+              echo "DB_PASSWORD=${var.db_password}" >> /etc/environment
+              EOF
+
   tags = {
     Name = "AppInstance"
   }
