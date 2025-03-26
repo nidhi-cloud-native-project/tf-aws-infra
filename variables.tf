@@ -59,8 +59,3 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
-
-variable "domain_name" {
-  description = "Domain name to use for Route53"
-  type        = string
-}
