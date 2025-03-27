@@ -18,13 +18,18 @@ resource "aws_instance" "app_instance" {
   # User data to set environment variables at EC2 boot
   user_data = <<-EOF
               #!/bin/bash
-              echo "DB_HOST=${aws_db_instance.rds_instance.address}" >> /etc/environment
-              echo "DB_NAME=csye6225" >> /etc/environment
-              echo "DB_USER=csye6225" >> /etc/environment
-              echo "DB_PASSWORD=${var.db_password}" >> /etc/environment
-              echo "S3_BUCKET_NAME=${aws_s3_bucket.file_storage_bucket.id}" >> /etc/environment
-              echo "AWS_REGION=${var.aws_region}" >> /etc/environment
-              EOF
+              echo "DB_HOST=${aws_db_instance.rds_instance.address}" >> /opt/webapp/.env
+              echo "DB_NAME=csye6225" >> /opt/webapp/.env
+              echo "DB_USER=csye6225" >> /opt/webapp/.env
+              echo "DB_PASSWORD=${var.db_password}" >> /opt/webapp/.env
+              echo "S3_BUCKET_NAME=${aws_s3_bucket.file_storage_bucket.id}" >> /opt/webapp/.env
+              echo "AWS_REGION=${var.aws_region}" >> /opt/webapp/.env
+
+              chown csye6225:csye6225 /opt/webapp/.env
+              chmod 600 /opt/webapp/.env
+
+              systemctl restart webapp.service
+            EOF
 
   tags = {
     Name = "AppInstance"
