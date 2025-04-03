@@ -9,10 +9,10 @@ resource "aws_launch_template" "asg_template" {
   }
 
   user_data = base64encode(templatefile("${path.module}/user_data.sh", {
-    DB_HOST         = aws_db_instance.rds_instance.address,
-    DB_PASSWORD     = var.db_password,
-    S3_BUCKET_NAME  = aws_s3_bucket.file_storage_bucket.id,
-    AWS_REGION      = var.aws_region
+    DB_HOST        = aws_db_instance.rds_instance.address,
+    DB_PASSWORD    = var.db_password,
+    S3_BUCKET_NAME = aws_s3_bucket.file_storage_bucket.id,
+    AWS_REGION     = var.aws_region
   }))
 
   network_interfaces {

@@ -64,3 +64,13 @@ variable "ssh_cidr_block" {
   description = "CIDR block allowed to SSH into EC2 (usually your own IP /32)"
   type        = string
 }
+
+variable "root_domain" {
+  description = "The root domain name"
+  type        = string
+}
+
+variable "route53_zone_id" {
+  description = "The Route 53 Hosted Zone ID (for demo or dev subdomain)"
+  type        = string
+}
