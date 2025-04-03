@@ -22,7 +22,6 @@ resource "aws_instance" "app_instance" {
               echo "DB_NAME=csye6225" >> /opt/webapp/.env
               echo "DB_USER=csye6225" >> /opt/webapp/.env
               echo "DB_PASSWORD=${var.db_password}" >> /opt/webapp/.env
-              echo "S3_ASSUME_ROLE_ARN=arn:aws:iam::${var.account_id}:role/s3-access-role" >> /opt/webapp/.env
               echo "S3_BUCKET_NAME=${aws_s3_bucket.file_storage_bucket.id}" >> /opt/webapp/.env
               echo "AWS_REGION=${var.aws_region}" >> /opt/webapp/.env
 

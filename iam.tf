@@ -1,69 +1,41 @@
-# IAM Role: Base EC2
-resource "aws_iam_role" "ec2_base_role" {
-  name = "ec2-base-role"
+# IAM Role: Unified EC2 Role
+resource "aws_iam_role" "ec2_unified_role" {
+  name = "ec2-unified-role"
 
   assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Effect = "Allow",
-      Principal = {
-        Service = "ec2.amazonaws.com"
-      },
-      Action = "sts:AssumeRole"
-    }]
-  })
-}
-
-# IAM Role: S3 Access
-resource "aws_iam_role" "s3_access_role" {
-  name = "s3-access-role"
-
-  assume_role_policy = aws_iam_role.ec2_base_role.assume_role_policy
-}
-
-resource "aws_iam_role_policy_attachment" "attach_s3_policy" {
-  role       = aws_iam_role.s3_access_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-}
-
-# IAM Role: CloudWatch Agent
-resource "aws_iam_role" "cloudwatch_agent_role" {
-  name = "cloudwatch-agent-role"
-
-  assume_role_policy = aws_iam_role.ec2_base_role.assume_role_policy
-}
-
-resource "aws_iam_role_policy_attachment" "attach_cw_policy" {
-  role       = aws_iam_role.cloudwatch_agent_role.name
-  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
-}
-
-# Instance Profile attaches all 3 roles
-resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "ec2-multi-role-instance-profile"
-  role = aws_iam_role.ec2_base_role.name
-}
-
-# Inline policy to allow base role to assume others
-resource "aws_iam_policy" "assume_other_roles" {
-  name = "AllowAssumeS3AndCloudWatch"
-
-  policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
         Effect = "Allow",
-        Action = "sts:AssumeRole",
-        Resource = [
-          aws_iam_role.s3_access_role.arn,
-          aws_iam_role.cloudwatch_agent_role.arn
-        ]
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
       }
     ]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "attach_assume_policy" {
-  role       = aws_iam_role.ec2_base_role.name
-  policy_arn = aws_iam_policy.assume_other_roles.arn
+# Attach S3 Full Access to unified role
+resource "aws_iam_role_policy_attachment" "attach_s3_policy" {
+  role       = aws_iam_role.ec2_unified_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+# Attach CloudWatch Agent policy to unified role
+resource "aws_iam_role_policy_attachment" "attach_cloudwatch_policy" {
+  role       = aws_iam_role.ec2_unified_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
+# Attach IAM PassRole (optional, if you're using fromTemporaryCredentials in code)
+resource "aws_iam_role_policy_attachment" "attach_passrole" {
+  role       = aws_iam_role.ec2_unified_role.name
+  policy_arn = "arn:aws:iam::aws:policy/IAMReadOnlyAccess"
+}
+
+# Instance Profile to attach to EC2
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "ec2-unified-instance-profile"
+  role = aws_iam_role.ec2_unified_role.name
 }
