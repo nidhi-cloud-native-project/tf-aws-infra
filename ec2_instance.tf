@@ -13,7 +13,7 @@ resource "aws_instance" "app_instance" {
     delete_on_termination = true
   }
 
-  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+  iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
 
   # User data to set environment variables at EC2 boot
   user_data = <<-EOF
