@@ -59,3 +59,8 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "ssh_cidr_block" {
+  description = "CIDR block allowed to SSH into EC2 (usually your own IP /32)"
+  type        = string
+}
