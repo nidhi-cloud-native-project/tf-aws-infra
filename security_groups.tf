@@ -1,42 +1,57 @@
-# Security Group for EC2 Application Instance
-resource "aws_security_group" "app_sg" {
+# Security Group for Load Balancer
+resource "aws_security_group" "lb_sg" {
+  name        = "load-balancer-sg"
+  description = "Allow HTTP and HTTPS from the internet"
   vpc_id      = aws_vpc.main_vpc.id
-  name        = "app-security-group"
-  description = "Security group for EC2 instances hosting web applications"
 
-  # Allow SSH access from anywhere
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # Allow HTTP access
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # Accept HTTP from anywhere
   }
 
-  # Allow HTTPS access
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # Accept HTTPS from anywhere
   }
 
-  # Allow access to the application port (e.g., 8080)
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"] # Allow all outbound traffic
+  }
+
+  tags = {
+    Name = "LoadBalancerSecurityGroup"
+  }
+}
+
+# Security Group for Web Application EC2 Instance
+resource "aws_security_group" "app_sg" {
+  name        = "webapp-sg"
+  description = "Allow SSH from developer IP and HTTP access from Load Balancer only"
+  vpc_id      = aws_vpc.main_vpc.id
+
+  # Allow SSH access from developer machine only
   ingress {
-    from_port   = var.app_port
-    to_port     = var.app_port
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.ssh_cidr_block]
   }
 
-  # Allow all outgoing traffic
+  # Allow app port ONLY from the Load Balancer security group
+  ingress {
+    from_port       = var.app_port
+    to_port         = var.app_port
+    protocol        = "tcp"
+    security_groups = [aws_security_group.lb_sg.id]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -45,17 +60,17 @@ resource "aws_security_group" "app_sg" {
   }
 
   tags = {
-    Name = "ApplicationSecurityGroup"
+    Name = "WebAppSecurityGroup"
   }
 }
 
-# Security Group for RDS Database Instance
+# Security Group for RDS Database
 resource "aws_security_group" "db_sg" {
-  vpc_id      = aws_vpc.main_vpc.id
   name        = "db-security-group"
-  description = "Security group for RDS instance"
+  description = "Allow MySQL access from the Web App EC2"
+  vpc_id      = aws_vpc.main_vpc.id
 
-  # Allow MySQL traffic only from EC2 app SG
+  # Only allow MySQL access (port 3306) from the Web App SG
   ingress {
     from_port       = 3306
     to_port         = 3306
@@ -63,7 +78,6 @@ resource "aws_security_group" "db_sg" {
     security_groups = [aws_security_group.app_sg.id]
   }
 
-  # Allow all outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
