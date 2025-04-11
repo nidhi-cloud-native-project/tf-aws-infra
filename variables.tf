@@ -74,3 +74,8 @@ variable "route53_zone_id" {
   description = "The Route 53 Hosted Zone ID (for demo or dev subdomain)"
   type        = string
 }
+
+variable "ssl_certificate_arn" {
+  description = "ARN of SSL cert imported to ACM"
+  type        = string
+}
