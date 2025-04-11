@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name       = "csye6225-db-password"
+  name       = "csye6225-db-password-${random_id.secret_suffix.hex}"
   kms_key_id = aws_kms_key.secrets.arn
 }
 
