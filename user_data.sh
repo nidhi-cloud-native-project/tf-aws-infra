@@ -7,6 +7,12 @@ if ! command -v aws &> /dev/null; then
     sudo ./aws/install
 fi
 
+# Install jq (used to parse JSON)
+if ! command -v jq &> /dev/null; then
+    sudo apt-get update
+    sudo apt-get install -y jq
+fi
+
 # Fetch DB password from Secrets Manager
 DB_PASSWORD=$(aws secretsmanager get-secret-value \
     --region ${AWS_REGION} \
@@ -19,7 +25,7 @@ cat <<EOL > /opt/webapp/.env
 DB_HOST=${DB_HOST}
 DB_NAME=csye6225
 DB_USER=csye6225
-DB_PASSWORD=${DB_PASSWORD}
+DB_PASSWORD=$DB_PASSWORD
 S3_BUCKET_NAME=${S3_BUCKET_NAME}
 AWS_REGION=${AWS_REGION}
 EOL
