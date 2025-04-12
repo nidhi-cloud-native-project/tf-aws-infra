@@ -5,13 +5,6 @@ resource "aws_security_group" "lb_sg" {
   vpc_id      = aws_vpc.main_vpc.id
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Accept HTTP from anywhere
-  }
-
-  ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"

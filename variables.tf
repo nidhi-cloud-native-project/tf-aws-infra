@@ -54,12 +54,6 @@ variable "ssh_key_name" {
   type        = string
 }
 
-variable "db_password" {
-  description = "Password for RDS DB"
-  type        = string
-  sensitive   = true
-}
-
 variable "ssh_cidr_block" {
   description = "CIDR block allowed to SSH into EC2 (usually your own IP /32)"
   type        = string
@@ -72,5 +66,10 @@ variable "root_domain" {
 
 variable "route53_zone_id" {
   description = "The Route 53 Hosted Zone ID (for demo or dev subdomain)"
+  type        = string
+}
+
+variable "ssl_certificate_arn" {
+  description = "ARN of SSL cert imported to ACM"
   type        = string
 }
