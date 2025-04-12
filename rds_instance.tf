@@ -20,4 +20,7 @@ resource "aws_db_instance" "rds_instance" {
   tags = {
     Name = "csye6225-RDS"
   }
+
+  # This ensures KMS is created first
+  depends_on = [aws_kms_key.rds]
 }

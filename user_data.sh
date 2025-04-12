@@ -1,17 +1,13 @@
 #!/bin/bash
 
-# Install AWS CLI if not present
-if ! command -v aws &> /dev/null; then
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    unzip awscliv2.zip
-    sudo ./aws/install
-fi
+# Install unzip (required for AWS CLI)
+sudo apt-get update
+sudo apt-get install -y unzip curl jq
 
-# Install jq (used to parse JSON)
-if ! command -v jq &> /dev/null; then
-    sudo apt-get update
-    sudo apt-get install -y jq
-fi
+# Install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 
 # Fetch DB password from Secrets Manager
 DB_PASSWORD=$(aws secretsmanager get-secret-value \
